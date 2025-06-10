@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    
+</head>
+<body>
+
+    <h2>Adicionar Nova Tarefa</h2>
+    <input type="text" id="nova-tarefa-input" placeholder="Digite o nome da tarefa">
+    <button id="adicionar-btn">Adicionar</button>
+
+    <hr>
+
+    <table style="width:100%; border-style:none;">
+      <tbody>
+        <tr style="vertical-align: top;">
+          <td style="width:50%; border-style:none;">
+            <h2>Tarefas Pendentes</h2>
+            <div id="lista-tarefas">
+                <div class="tarefa">
+                    <select class="situacao">
+                        <option value="inicio">Aguardando</option>
+                        <option value="atribuida">Em andamento</option>
+                        <option value="parada">Pausada</option>
+                        <option value="rejeitada">Rejeitada</option>
+                        <option value="fim">Concluída</option>
+                    </select>
+                    <label>Instalar impressora RH</label>
+                </div>
+            </div>
+          </td>
+          <td style="width:50%; border-style:none;">
+            <h2>Tarefas Concluídas</h2>
+            <table id="tabela-concluidas">
+                <thead>
+                    <tr>
+                        <th>Tarefa</th>
+                        <th>Data de Conclusão</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <script>
+        document.getElementById('adicionar-btn').addEventListener('click', adicionarTarefa);
+        document.getElementById('lista-tarefas').addEventListener('change', atualizarStatus);
+
+        function adicionarTarefa() {
+            const input = document.getElementById('nova-tarefa-input');
+            const nomeTarefa = input.value.trim();
+
+            if (nomeTarefa === "") {
+                alert("Por favor, digite o nome da tarefa.");
+                return;
+            }
+
+            const listaTarefas = document.getElementById('lista-tarefas');
+
+            const novaTarefaDiv = document.createElement('div');
+            novaTarefaDiv.className = 'tarefa';
+
+            const novoSelect = document.createElement('select');
+            novoSelect.className = 'situacao';
+            novoSelect.innerHTML = `
+                <option value="inicio">Aguardando</option>
+                <option value="atribuida">Em andamento</option>
+                <option value="parada">Pausada</option>
+                <option value="rejeitada">Rejeitada</option>
+                <option value="fim">Concluída</option>
+            `;
+
+            const novoLabel = document.createElement('label');
+            novoLabel.textContent = nomeTarefa;
+
+            novaTarefaDiv.appendChild(novoSelect);
+            novaTarefaDiv.appendChild(novoLabel);
+            listaTarefas.appendChild(novaTarefaDiv);
+
+            input.value = '';
+        }
+
+        function atualizarStatus(evento) {
+            if (evento.target.tagName !== 'SELECT') return;
+
+            const select = evento.target;
+            const label = select.nextElementSibling;
+            const tarefaDiv = select.parentElement;
+            const status = select.value;
+
+            label.style.color = '#000';
+            
+            switch (status) {
+                case 'atribuida':
+                    label.style.backgroundColor = 'lightgreen';
+                    break;
+                case 'parada':
+                    label.style.backgroundColor = 'yellow';
+                    break;
+                case 'rejeitada':
+                    label.style.backgroundColor = 'tomato';
+                    label.style.color = '#fff';
+                    break;
+                case 'fim':
+                    concluirTarefa(label.textContent, tarefaDiv);
+                    break;
+                default:
+                    label.style.backgroundColor = 'transparent';
+            }
+        }
+
+        function concluirTarefa(nomeTarefa, elementoTarefa) {
+            const tabelaCorpo = document.querySelector('#tabela-concluidas tbody');
+            const dataConclusao = new Date().toLocaleDateString('pt-BR');
+
+            const novaLinha = tabelaCorpo.insertRow();
+            
+            const celulaTarefa = novaLinha.insertCell(0);
+            celulaTarefa.textContent = nomeTarefa;
+
+            const celulaData = novaLinha.insertCell(1);
+            celulaData.textContent = dataConclusao;
+            
+            elementoTarefa.remove();
+        }
+    </script>
+</body>
+</html>
