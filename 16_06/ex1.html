@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+
+    <label for="nomeInput">Nome:</label>
+    <input type="text" id="nomeInput">
+    <br>
+    <br>
+
+    <label for="emailInput">E-mail:</label>
+    <input type="email" id="emailInput">
+    <br>
+    <br>
+
+    <button id="salvarBtn">Salvar</button>
+    <button id="mostrarBtn">Mostrar Dados</button>
+    <button id="apagarBtn">Apagar Dados</button>
+
+    <p id="dadosUsuario"></p>
+
+    <script>
+        const nomeInput = document.getElementById('nomeInput');
+        const emailInput = document.getElementById('emailInput');
+        const salvarBtn = document.getElementById('salvarBtn');
+        const mostrarBtn = document.getElementById('mostrarBtn');
+        const apagarBtn = document.getElementById('apagarBtn');
+        const dadosUsuarioP = document.getElementById('dadosUsuario');
+
+        salvarBtn.addEventListener('click', () => {
+            const nome = nomeInput.value;
+            const email = emailInput.value;
+            
+            if (nome && email) {
+                localStorage.setItem('nome', nome);
+                localStorage.setItem('email', email);
+                nomeInput.value = '';
+                emailInput.value = '';
+                dadosUsuarioP.textContent = 'Dados salvos com sucesso!';
+            } else {
+                alert('Por favor, preencha ambos os campos.');
+            }
+        });
+
+        
+
+        apagarBtn.addEventListener('click', () => {
+            localStorage.removeItem('nome');
+            localStorage.removeItem('email');
+        });
+    </script>
+
+</body>
+</html>

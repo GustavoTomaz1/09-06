@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercício 5: Cotação do Dólar</title>
+</head>
+<body>
+    <h1>Consultar Cotação do Dólar</h1>
+    <label for="data">Selecione a data:</label>
+    <input type="date" id="data">
+    <button id="consultar">Consultar</button>
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById('consultar').addEventListener('click', () => {
+            const dataInput = document.getElementById('data').value;
+            if (!dataInput) {
+                document.getElementById('resultado').innerHTML = 'Por favor, selecione uma data.';
+                return;
+            }
+            const [ano, mes, dia] = dataInput.split('-');
+            const dataFormatada = `${mes}-${dia}-${ano}`;
+            
+            const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${dataFormatada}'&$top=100&$format=json`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultadoDiv = document.getElementById('resultado');
+                    if (data.value && data.value.length > 0) {
+                        const cotacaoCompra = data.value[0].cotacaoCompra;
+                        const cotacaoVenda = data.value[0].cotacaoVenda;
+                        resultadoDiv.innerHTML = `<p>Data: ${dia}/${mes}/${ano}</p>
+                                                  <p>Cotação de Compra: R$ ${cotacaoCompra}</p>
+                                                  <p>Cotação de Venda: R$ ${cotacaoVenda}</p>`;
+                    } else {
+                        resultadoDiv.innerHTML = 'Nenhuma cotação encontrada para esta data.';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('resultado').innerHTML = 'Erro ao consultar a API.';
+                    console.error('Erro:', error);
+                });
+        });
+    </script>
+</body>
+</html>

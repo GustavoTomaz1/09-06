@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<script>
+        let x = 2;
+        let saida;
+
+        window.onload = inicio;
+
+        function inicio() {
+            saida = document.getElementById('saida');
+            setTimeout(multi, 2000);
+        }
+
+        function multi() {
+            x = x * x;
+            saida.innerHTML = x;
+        }
+    </script>
+</head>
+<body>
+     <p id="saida">
+
+    
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Cotação do Dólar Atual</h1>
+    <p>(Atualizando a cada 5 segundos)</p>
+    <div id="cotacao-atual"></div>
+
+    <script>
+        const cotacaoDiv = document.getElementById('cotacao-atual');
+
+        function buscarCotacao() {
+            const data = new Date();
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const dia = String(data.getDate()).padStart(2, '0');
+            const ano = data.getFullYear();
+            const dataFormatada = `${mes}-${dia}-${ano}`;
+
+            const url = `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${dataFormatada}'&$top=100&$format=json`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.value && data.value.length > 0) {
+                        const cotacaoCompra = data.value[0].cotacaoCompra;
+                        const cotacaoVenda = data.value[0].cotacaoVenda;
+                        const dataHora = new Date(data.value[0].dataHoraCotacao).toLocaleTimeString('pt-BR');
+                        cotacaoDiv.innerHTML = `<p>Última atualização: ${dataHora}</p>
+                                                <p>Compra: R$ ${cotacaoCompra}</p>
+                                                <p>Venda: R$ ${cotacaoVenda}</p>`;
+                    } else {
+                        cotacaoDiv.innerHTML = 'Aguardando dados de cotação para o dia de hoje...';
+                    }
+                })
+                .catch(error => {
+                    cotacaoDiv.innerHTML = 'Erro ao buscar cotação.';
+                    console.error('Erro:', error);
+                });
+        }
+
+        window.onload = () => {
+            buscarCotacao();
+            setInterval(buscarCotacao, 5000);
+        };
+    </script>
+</body>
+</html>
